@@ -48,6 +48,7 @@ private slots:
     void on_table_itemChanged(QTableWidgetItem *m_item);
     void transfer_finish(QBluetoothTransferReply *reply);
     void transfer_error(QBluetoothTransferReply::TransferError error);
+    void discoveryFinished();
 
 private:
     QPushButton *btn_search;

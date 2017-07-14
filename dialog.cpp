@@ -71,12 +71,20 @@ Dialog::Dialog(){
 
     //bluetooth connect and discover action
     connect(agent, SIGNAL(deviceDiscovered(QBluetoothDeviceInfo)), this, SLOT(show_info(QBluetoothDeviceInfo)));
+    connect(agent, SIGNAL(finished()), this, SLOT(discoveryFinished()));
+    connect(agent, SIGNAL(canceled()), this, SLOT(discoveryFinished()));
     connect(local_device, SIGNAL(pairingFinished(QBluetoothAddress,QBluetoothLocalDevice::Pairing)), this,
             SLOT(pairingFinished(QBluetoothAddress,QBluetoothLocalDevice::Pairing)));
     connect(local_device, SIGNAL(error(QBluetoothLocalDevice::Error)), this,
             SLOT(error(QBluetoothLocalDevice::Error)));
     connect(table, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(on_table_itemChanged(QTableWidgetItem*)));
 
+}
+
+void Dialog::discoveryFinished(){
+    QMessageBox mess;
+    mess.setText("Scan finished");
+    mess.exec();
 }
 
 void Dialog::talk_on_clicked(){
@@ -88,21 +96,23 @@ void Dialog::search_on_clicked(){
     table->setRowCount(0);
     device_list->clear();
     agent->start();
-    agent->stop();
 }
 
 void Dialog::show_info(const QBluetoothDeviceInfo &info){
     int row = table->rowCount();
     table->insertRow(row);
     item = new QTableWidgetItem(info.address().toString());
+    item->setFlags(item->flags() ^ Qt::ItemIsEditable);
     table->setItem(row, 0, item);
 
     item = new QTableWidgetItem(info.name());
+
     table->setItem(row, 1, item);
 
     table->blockSignals(true);
 
     item = new QTableWidgetItem;
+    item->setFlags(item->flags() & Qt::ItemIsEditable);
     QBluetoothLocalDevice::Pairing pair;
     pair = local_device->pairingStatus(info.address());
 

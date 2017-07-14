@@ -142,7 +142,7 @@ void ServerTalk::clientConnect(){
     emit clientConnect(socket->peerName());
 }
 
-void ServerTalk::clientDisconnect(){
+void ServerTalk::clientDisconnected(){
     QBluetoothSocket *socket = qobject_cast<QBluetoothSocket *>(sender());
     if (!socket)
         return;

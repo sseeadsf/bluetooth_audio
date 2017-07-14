@@ -46,7 +46,7 @@ signals:
 
 private slots:
     void clientConnect();
-    void clientDisconnect();
+    void clientDisconnected();
     void readSocket();
     void handleStateChangedInput(const QAudio::State&);
     void handleStateChangedOutput(const QAudio::State&);
