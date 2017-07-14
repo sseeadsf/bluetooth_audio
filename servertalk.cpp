@@ -54,15 +54,12 @@ void ServerTalk::startServer(const QBluetoothAddress &local){
     service_info.registerService(local);
 
 
-    format.setChannelCount(1);
+    format.setChannelCount(2);
     format.setSampleRate(48000);
-    format.setSampleSize(8);
+    format.setSampleSize(16);
     format.setCodec("audio/amr");
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setSampleType(QAudioFormat::UnSignedInt);
-    QAudioDeviceInfo info(QAudioDeviceInfo::defaultInputDevice());
-    if (!info.isFormatSupported(format))
-        format = info.nearestFormat(format);
 
 }
 
@@ -93,6 +90,7 @@ void ServerTalk::readSocket(){
     QBluetoothSocket *socket = qobject_cast<QBluetoothSocket *>(sender());
     if (!socket)
         return;
+
     audio_output = new QAudioOutput(format, this);
     connect(audio_output, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChangedOutput(QAudio::State)));
     buff = new QByteArray;

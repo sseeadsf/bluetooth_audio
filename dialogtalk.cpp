@@ -26,15 +26,6 @@ DialogTalk::DialogTalk(){
     main_layout->addWidget(btn_talk);
     setLayout(main_layout);
 
-
-
-    //bluetooth and button action
-    connect(agent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
-    connect(agent, SIGNAL(finished()), this, SLOT(discoveryFinished()));
-    connect(agent, SIGNAL(canceled()), this, SLOT(discoveryFinished()));
-    connect(btn_search, SIGNAL(clicked()), this, SLOT(search_on_clicked()));
-    connect(table, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(service_select(QTableWidgetItem*)));
-
     server = new ServerTalk(this);
     connect(server, SIGNAL(clientConnect(QString)), this, SLOT(clientConnected(QString)));
     connect(server, SIGNAL(clientDisconnect(QString)), this, SLOT(clientDisconnected(QString)));
@@ -43,6 +34,12 @@ DialogTalk::DialogTalk(){
     server->startServer();
 
 
+    //bluetooth and button action
+    connect(agent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
+    connect(agent, SIGNAL(finished()), this, SLOT(discoveryFinished()));
+    connect(agent, SIGNAL(canceled()), this, SLOT(discoveryFinished()));
+    connect(btn_search, SIGNAL(clicked()), this, SLOT(search_on_clicked()));
+    connect(table, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(service_select(QTableWidgetItem*)));
 }
 
 
@@ -51,15 +48,12 @@ void DialogTalk::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo){
     table->insertRow(row);
 
     item = new QTableWidgetItem(serviceInfo.device().name());
-    //item->setFlags(item->flags() ^ Qt::ItemIsEditable);
     table->setItem(row, 0, item);
     item = new QTableWidgetItem(serviceInfo.serviceUuid().toString());
-    //item->setFlags(item->flags() ^ Qt::ItemIsEditable);
     table->setItem(row, 1, item);
     table->blockSignals(true);
 
     item = new QTableWidgetItem;
-    //item->setFlags(item->flags() & Qt::ItemIsEditable);
     item->setCheckState(Qt::Unchecked);
     table->setItem(row, 2, item);
     table->blockSignals(false);
@@ -95,14 +89,14 @@ void DialogTalk::service_select(QTableWidgetItem *item_selected){
         client->startClient(device_list->at(row));
         clients.append(client);
     }
-
+    /*
     if(item_selected->checkState() == Qt::Unchecked && column == 2){
-        /*ClientTalk *client = qobject_cast<ClientTalk *>(sender());
+        ClientTalk *client = qobject_cast<ClientTalk *>(sender());
         if (client) {
             clients.removeOne(client);
             client->deleteLater();
-        }*/
-    }
+        }
+    }*/
 }
 
 

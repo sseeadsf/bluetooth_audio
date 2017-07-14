@@ -23,21 +23,18 @@ void ClientTalk::startClient(const QBluetoothServiceInfo &remoteService){
 
     socket->connectToService(remoteService);
 
-    format.setChannelCount(1);
+    format.setChannelCount(2);
     format.setSampleRate(48000);
-    format.setSampleSize(8);
+    format.setSampleSize(16);
     format.setCodec("audio/amr");
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setSampleType(QAudioFormat::UnSignedInt);
-    QAudioDeviceInfo info(QAudioDeviceInfo::defaultInputDevice());
-    if (!info.isFormatSupported(format))
-        format = info.nearestFormat(format);
 
     connect(socket, SIGNAL(readyRead()), this, SLOT(readSocket()));
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
     connect(socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
-    connect(audio_output, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChangedOutput(QAudio::State)));
-    connect(audio_input, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChangedInput(QAudio::State)));
+
+
 }
 
 
@@ -50,19 +47,21 @@ void ClientTalk::stopClient(){
 void ClientTalk::readSocket(){
 
     audio_output = new QAudioOutput(format, this);
-
+    connect(audio_output, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChangedOutput(QAudio::State)));
     buff = new QByteArray;
     while(socket->canReadLine()){
         buff->append(socket->readLine());
         QDataStream s(buff, QIODevice::ReadOnly);
         audio_output->start(s.device());
     }
+
 }
 
 
 void ClientTalk::startTalk(){
 
     audio_input = new QAudioInput(format, this);
+    connect(audio_input, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChangedInput(QAudio::State)));
     audio_input->setBufferSize(8192);
     audio_input->start(socket);
 
