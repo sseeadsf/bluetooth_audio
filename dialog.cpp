@@ -102,7 +102,6 @@ void Dialog::show_info(const QBluetoothDeviceInfo &info){
     int row = table->rowCount();
     table->insertRow(row);
     item = new QTableWidgetItem(info.address().toString());
-    item->setFlags(item->flags() ^ Qt::ItemIsEditable);
     table->setItem(row, 0, item);
 
     item = new QTableWidgetItem(info.name());
@@ -112,7 +111,6 @@ void Dialog::show_info(const QBluetoothDeviceInfo &info){
     table->blockSignals(true);
 
     item = new QTableWidgetItem;
-    item->setFlags(item->flags() & Qt::ItemIsEditable);
     QBluetoothLocalDevice::Pairing pair;
     pair = local_device->pairingStatus(info.address());
 
