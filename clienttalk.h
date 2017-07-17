@@ -9,6 +9,9 @@
 #include <qaudiooutput.h>
 #include <qmessagebox.h>
 #include <qbluetoothsocket.h>
+#include <QDebug>
+#include <QBuffer>
+
 
 QT_FORWARD_DECLARE_CLASS(QBluetoothSocket)
 

@@ -15,6 +15,8 @@
 #include <QAudioFormat>
 #include <qaudioinput.h>
 #include <qaudiooutput.h>
+#include <QDebug>
+#include <QBuffer>
 
 QT_FORWARD_DECLARE_CLASS(QBluetoothServer)
 QT_FORWARD_DECLARE_CLASS(QBluetoothSocket)
@@ -56,6 +58,7 @@ private:
     QBluetoothServiceInfo service_info;
     QList<QBluetoothSocket *> client_socket;
     QByteArray *buff;
+
 
 
 };

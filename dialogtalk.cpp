@@ -81,12 +81,12 @@ void DialogTalk::service_select(QTableWidgetItem *item_selected){
 
     if(item_selected->checkState() == Qt::Checked && column == 2){
         btn_talk->disconnect();
-        server->disconnect();
+        //server->disconnect();
 
         ClientTalk *client = new ClientTalk(this);
+        client->startClient(device_list->at(row));
         connect(client, SIGNAL(connected(QString)), this, SLOT(connected(QString)));
         connect(btn_talk, SIGNAL(clicked()), client, SLOT(startTalk()));
-        client->startClient(device_list->at(row));
         clients.append(client);
     }
     /*
@@ -108,7 +108,7 @@ void DialogTalk::clientConnected(const QString &names){
 
 void DialogTalk::clientDisconnected(const QString &name){
     QMessageBox mess;
-    mess.setText(name+" disconnect to server");
+    mess.setText(name+" disconnect");
     mess.exec();
 }
 
