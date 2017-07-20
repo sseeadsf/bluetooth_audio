@@ -1,8 +1,6 @@
 
 #include "clienttalk.h"
 
-#include <qbluetoothsocket.h>
-
 ClientTalk::ClientTalk(QObject *parent)
 :   QObject(parent), socket(0)
 {
@@ -25,7 +23,7 @@ void ClientTalk::startClient(const QBluetoothServiceInfo &remoteService){
 
     format.setChannelCount(2);
     format.setSampleRate(48000);
-    format.setSampleSize(16);
+    format.setSampleSize(8);
     format.setCodec("audio/amr");
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setSampleType(QAudioFormat::UnSignedInt);
@@ -34,7 +32,10 @@ void ClientTalk::startClient(const QBluetoothServiceInfo &remoteService){
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
     connect(socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
 
-
+    audio_output = new QAudioOutput(format, this);
+    audio_input = new QAudioInput(format, this);
+    audio_output->setBufferSize(1024);
+    audio_input->setBufferSize(1024);
 }
 
 
@@ -46,17 +47,24 @@ void ClientTalk::stopClient(){
 
 void ClientTalk::readSocket(){
 
-    QBuffer *buffer;
-    audio_output = new QAudioOutput(format, this);
+    //QBuffer *buffer;
+    QByteArray buff;
+
+
+    audio_input->stop();
+
     connect(audio_output, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChangedOutput(QAudio::State)));
-    buff = new QByteArray;
+
+
     while(socket->canReadLine()){
-        buff->append(socket->readLine());
-        buffer = new QBuffer(buff);
-        buffer->open(QIODevice::ReadOnly);
-        //QDataStream s(buff, QIODevice::ReadOnly);
-        audio_output->start(buffer);
+        buff.append(socket->readLine());
+        QBuffer audio_buffer(&buff);
+        audio_buffer.open(QIODevice::ReadWrite);
+        //QDataStream s(buff, QIODevice::ReadWrite);
+        audio_output->start(&audio_buffer);
+        qDebug() << buff << endl;
     }
+    buff.clear();
 
 }
 
@@ -64,9 +72,9 @@ void ClientTalk::readSocket(){
 void ClientTalk::startTalk(){
     qDebug() << "Start talk";
 
-    audio_input = new QAudioInput(format, this);
+    audio_output->stop();
     connect(audio_input, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChangedInput(QAudio::State)));
-    audio_input->setBufferSize(8192);
+
     audio_input->start(socket);
 
     qDebug() << "Talking to server";

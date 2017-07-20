@@ -19,10 +19,10 @@
 #include <QtBluetooth/QBluetoothTransferRequest>
 #include <QFile>
 #include <QBluetoothTransferReply>
-#include <qbluetoothserver.h>
-#include <qbluetoothsocket.h>
-#include <qbluetoothlocaldevice.h>
-#include <QtBluetooth/qbluetoothservicediscoveryagent.h>
+#include <QBluetoothServer>
+#include <QBluetoothSocket>
+#include <QBluetoothLocalDevice>
+#include <QtBluetooth/QBluetoothServiceDiscoveryAgent>
 
 #include "clienttalk.h"
 #include "servertalk.h"
@@ -61,6 +61,7 @@ private:
     QPushButton *btn_talk;
     int row;
     QBluetoothLocalDevice *local;
+    QPushButton *btn_replay;
 
 
 };

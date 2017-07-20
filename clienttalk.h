@@ -1,16 +1,17 @@
 #ifndef CLIENTTALK_H
 #define CLIENTTALK_H
 
-#include <qbluetoothserviceinfo.h>
+#include <QBluetoothServiceInfo>
 
 #include <QtCore/QObject>
 #include <QAudioFormat>
-#include <qaudioinput.h>
-#include <qaudiooutput.h>
-#include <qmessagebox.h>
-#include <qbluetoothsocket.h>
+#include <QAudioInput>
+#include <QAudioOutput>
+#include <QMessageBox>
+#include <QBluetoothSocket>
 #include <QDebug>
 #include <QBuffer>
+#include <QAudioFormat>
 
 
 QT_FORWARD_DECLARE_CLASS(QBluetoothSocket)
@@ -48,7 +49,7 @@ private slots:
 
 private:
     QBluetoothSocket *socket;
-    QByteArray *buff;
+    //QByteArray *buff;
     QAudioFormat format;
     QAudioInput *audio_input;
     QAudioOutput *audio_output;

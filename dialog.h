@@ -20,9 +20,9 @@
 #include <QtBluetooth/QBluetoothTransferRequest>
 #include <QFile>
 #include <QBluetoothTransferReply>
-#include <qbluetoothserver.h>
-#include <qbluetoothsocket.h>
-#include <qbluetoothlocaldevice.h>
+#include <QBluetoothServer>
+#include <QBluetoothSocket>
+#include <QBluetoothLocalDevice>
 
 #include "dialogtalk.h"
 

@@ -88,6 +88,7 @@ void Dialog::discoveryFinished(){
 }
 
 void Dialog::talk_on_clicked(){
+    this->close();
     new_dialog = new DialogTalk();
     new_dialog->showMaximized();
 }

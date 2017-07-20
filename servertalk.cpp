@@ -55,11 +55,16 @@ void ServerTalk::startServer(const QBluetoothAddress &local){
 
 
     format.setChannelCount(2);
-    format.setSampleRate(48000);
-    format.setSampleSize(16);
+    format.setSampleRate(8000);
+    format.setSampleSize(8);
     format.setCodec("audio/amr");
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setSampleType(QAudioFormat::UnSignedInt);
+
+    audio_output = new QAudioOutput(format, this);
+    audio_output->setBufferSize(1024);
+    audio_input = new QAudioInput(format, this);
+    audio_input->setBufferSize(1024);
 
 }
 
@@ -78,9 +83,10 @@ void ServerTalk::stopServer(){
 void ServerTalk::startTalk(){
 
     qDebug() << "Start talk";
+    audio_output->stop();
+
     foreach (QBluetoothSocket *socket, client_socket){
-        audio_input = new QAudioInput(format, this);
-        audio_input->setBufferSize(8192);
+
         audio_input->start(socket);
         qDebug() << "Talking to client";
         connect(audio_input, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChangedInput(QAudio::State)));
@@ -93,18 +99,26 @@ void ServerTalk::readSocket(){
     if (!socket)
         return;
 
-    QBuffer *buffer;
+    //QBuffer *buffer;
 
-    audio_output = new QAudioOutput(format, this);
+    audio_input->stop();
+    QByteArray buff;
+
     connect(audio_output, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChangedOutput(QAudio::State)));
-    buff = new QByteArray;
+
     while(socket->canReadLine()){
-        buff->append(socket->readLine());
-        buffer = new QBuffer(buff);
-        buffer->open(QIODevice::ReadOnly);
-        //QDataStream s(buff, QIODevice::ReadOnly);
-        audio_output->start(buffer);
+        buff.append(socket->readLine());
+        QBuffer audio_buffer(&buff);
+        audio_buffer.open(QIODevice::ReadWrite);
+        //QDataStream s(buff, QIODevice::ReadWrite);
+        audio_output->start(&audio_buffer);
+        qDebug() << buff << endl;
     }
+    buff.clear();
+}
+
+void ServerTalk::replay(){
+
 }
 
 void ServerTalk::handleStateChangedInput(const QAudio::State &state){

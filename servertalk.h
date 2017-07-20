@@ -1,22 +1,21 @@
 #ifndef SERVERTALK_H
 #define SERVERTALK_H
 
-#include <qbluetoothserviceinfo.h>
-#include <qbluetoothaddress.h>
-#include <qbluetoothserver.h>
+#include <QBluetoothServiceInfo>
+#include <QBluetoothAddress>
+#include <QBluetoothServer>
 #include <QAudioBuffer>
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
-#include <qmessagebox.h>
-#include <qbluetoothsocket.h>
-#include <qaudiorecorder.h>
-#include <qaudioprobe.h>
+#include <QMessageBox>
+#include <QBluetoothSocket>
 #include <QAudioFormat>
-#include <qaudioinput.h>
-#include <qaudiooutput.h>
+#include <QAudioInput>
+#include <QAudioOutput>
 #include <QDebug>
 #include <QBuffer>
+#include <QDataStream>
 
 QT_FORWARD_DECLARE_CLASS(QBluetoothServer)
 QT_FORWARD_DECLARE_CLASS(QBluetoothSocket)
@@ -46,18 +45,20 @@ signals:
     void clientDisconnect(const QString&);
     void messageReceived(const QString&, const QString&);
 
+
 private slots:
     void clientConnect();
     void clientDisconnected();
     void readSocket();
     void handleStateChangedInput(const QAudio::State&);
     void handleStateChangedOutput(const QAudio::State&);
+    void replay();
 
 private:
     QBluetoothServer *rfcomm_server;
     QBluetoothServiceInfo service_info;
     QList<QBluetoothSocket *> client_socket;
-    QByteArray *buff;
+    //QByteArray *buff;
 
 
 

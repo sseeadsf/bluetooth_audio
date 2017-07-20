@@ -12,32 +12,37 @@ DialogTalk::DialogTalk(){
     QStringList list;
     list << tr("Device Name") << tr("Uuid") << tr("Connect");
     table->setHorizontalHeaderLabels(list);
-    table->setColumnWidth(0, 500);
-    table->setColumnWidth(1,700);
+    table->setColumnWidth(0, 400);
+    table->setColumnWidth(1,500);
     table->setColumnWidth(2, 100);
     btn_talk = new QPushButton(tr("Talk"));
     device_list = new QVector<QBluetoothServiceInfo>();
     local = new QBluetoothLocalDevice;
     agent = new QBluetoothServiceDiscoveryAgent(this);
+    btn_replay = new QPushButton(tr("Replay"));
 
     //add widget to main layout
     main_layout->addWidget(btn_search);
     main_layout->addWidget(table);
     main_layout->addWidget(btn_talk);
+    main_layout->addWidget(btn_replay);
     setLayout(main_layout);
 
+    //server signal
     server = new ServerTalk(this);
     connect(server, SIGNAL(clientConnect(QString)), this, SLOT(clientConnected(QString)));
     connect(server, SIGNAL(clientDisconnect(QString)), this, SLOT(clientDisconnected(QString)));
-    connect(btn_talk, SIGNAL(clicked()), server, SLOT(startTalk()));
-    //connect(btn_talk, SIGNAL(released()), server, SLOT(readSocket()));
     server->startServer();
 
-
-    //bluetooth and button action
+    //bluetooth signal
     connect(agent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
     connect(agent, SIGNAL(finished()), this, SLOT(discoveryFinished()));
     connect(agent, SIGNAL(canceled()), this, SLOT(discoveryFinished()));
+
+    //button signal
+    connect(btn_talk, SIGNAL(pressed()), server, SLOT(startTalk()));
+    connect(btn_talk, SIGNAL(released()), server, SLOT(readSocket()));
+    connect(btn_replay, SIGNAL(clicked()), server, SLOT(replay()));
     connect(btn_search, SIGNAL(clicked()), this, SLOT(search_on_clicked()));
     connect(table, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(service_select(QTableWidgetItem*)));
 }
@@ -63,6 +68,7 @@ void DialogTalk::serviceDiscovered(const QBluetoothServiceInfo &serviceInfo){
 
 
 void DialogTalk::search_on_clicked(){
+    device_list->clear();
     table->setRowCount(0);
     agent->setUuidFilter(QBluetoothUuid(uuid));
     agent->start(QBluetoothServiceDiscoveryAgent::FullDiscovery);
@@ -81,23 +87,16 @@ void DialogTalk::service_select(QTableWidgetItem *item_selected){
 
     if(item_selected->checkState() == Qt::Checked && column == 2){
         btn_talk->disconnect();
-        //server->disconnect();
 
         ClientTalk *client = new ClientTalk(this);
         client->startClient(device_list->at(row));
         connect(client, SIGNAL(connected(QString)), this, SLOT(connected(QString)));
-        connect(btn_talk, SIGNAL(clicked()), client, SLOT(startTalk()));
+        connect(btn_talk, SIGNAL(pressed()), client, SLOT(startTalk()));
+        connect(btn_talk, SIGNAL(released()), client, SLOT(readSocket()));
         clients.append(client);
     }
-    /*
-    if(item_selected->checkState() == Qt::Unchecked && column == 2){
-        ClientTalk *client = qobject_cast<ClientTalk *>(sender());
-        if (client) {
-            clients.removeOne(client);
-            client->deleteLater();
-        }
-    }*/
 }
+
 
 
 void DialogTalk::clientConnected(const QString &names){
