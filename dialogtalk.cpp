@@ -28,6 +28,8 @@ DialogTalk::DialogTalk(){
     main_layout->addWidget(btn_replay);
     setLayout(main_layout);
 
+
+
     //server signal
     server = new ServerTalk(this);
     connect(server, SIGNAL(clientConnect(QString)), this, SLOT(clientConnected(QString)));
@@ -45,6 +47,7 @@ DialogTalk::DialogTalk(){
     connect(btn_replay, SIGNAL(clicked()), server, SLOT(replay()));
     connect(btn_search, SIGNAL(clicked()), this, SLOT(search_on_clicked()));
     connect(table, SIGNAL(itemChanged(QTableWidgetItem*)), SLOT(service_select(QTableWidgetItem*)));
+
 }
 
 

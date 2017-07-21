@@ -40,6 +40,6 @@ HEADERS += \
 FORMS += \
         dialog.ui
 
-CONFIG += mobility
+CONFIG += mobility debug
 MOBILITY = 
 
