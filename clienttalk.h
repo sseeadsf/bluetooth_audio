@@ -12,6 +12,8 @@
 #include <QDebug>
 #include <QBuffer>
 #include <QAudioFormat>
+#include <QFile>
+#include <QTimer>
 
 
 QT_FORWARD_DECLARE_CLASS(QBluetoothSocket)

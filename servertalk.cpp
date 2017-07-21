@@ -94,6 +94,7 @@ void ServerTalk::startTalk(){
 void ServerTalk::readSocket(){
     audio_output = new QAudioOutput(format, this);
 
+
     QBluetoothSocket *socket = qobject_cast<QBluetoothSocket *>(sender());
     if (!socket)
         return;
@@ -101,17 +102,16 @@ void ServerTalk::readSocket(){
     //QBuffer *buffer;
 
     //audio_input->suspend();
-    QByteArray buff;
+
 
     connect(audio_output, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChangedOutput(QAudio::State)));
 
     while(socket->canReadLine()){
         buff.append(socket->readLine());
         QBuffer audio_buffer(&buff);
-        audio_buffer.open(QIODevice::WriteOnly);
+        audio_buffer.open(QIODevice::ReadOnly);
         //QDataStream s(buff, QIODevice::ReadWrite);
         audio_output->start(&audio_buffer);
-        qDebug() << buff << endl;
     }
     buff.clear();
 }

@@ -57,10 +57,10 @@ void ClientTalk::readSocket(){
     while(socket->canReadLine()){
         buff.append(socket->readLine());
         QBuffer audio_buffer(&buff);
-        audio_buffer.open(QIODevice::WriteOnly);
+        audio_buffer.open(QIODevice::ReadOnly);
         //QDataStream s(buff, QIODevice::ReadWrite);
         audio_output->start(&audio_buffer);
-        qDebug() << buff << endl;
+        //qDebug() << buff << endl;
     }
     buff.clear();
 }
@@ -77,6 +77,18 @@ void ClientTalk::startTalk(){
 
     qDebug() << "Talking to server";
 }
+/*
+void ClientTalk::startTalk(){
+    audio_input = new QAudioInput(format, this);
+
+    QFile file;
+
+    file.setFileName("/tmp/air.mp3");
+    file.open(QIODevice::WriteOnly | QIODevice::Truncate);
+
+    QTimer::singleShot(3000, audio_input, SLOT(stopRecording()));
+    audio_input->start(&file);
+}*/
 
 
 void ClientTalk::connected(){

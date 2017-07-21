@@ -59,6 +59,7 @@ private:
     QBluetoothServiceInfo service_info;
     QList<QBluetoothSocket *> client_socket;
     //QByteArray *buff;
+    QByteArray buff;
 
 
 
